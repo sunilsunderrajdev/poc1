@@ -19,3 +19,7 @@ variable "public_subnets" {
 variable "env_code" {
     type = string
 }
+
+variable "account" {
+    type = string
+}
