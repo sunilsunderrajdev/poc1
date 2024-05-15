@@ -4,7 +4,7 @@
 # Local .terraform directories
 **/.terraform/*
 
-# .tfstate files. Enable only first time for bootstrap.level.0
+# .tfstate files. Enable only first time for bootstrap.level.0 state file to be checked in
 *.tfstate
 *.tfstate.*
 
