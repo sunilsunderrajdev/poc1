@@ -24,7 +24,7 @@ resource "aws_api_gateway_integration" "poc_rest_api_integration" {
     type                    = "AWS"
     integration_http_method = "POST"
     passthrough_behavior    = "NEVER"
-    credentials             = aws_iam_role.userstatus_sqs_role.arn
+    credentials             = aws_iam_role.apigtw_role.arn
     uri                     = "arn:aws:apigateway:${var.region}:sqs:path/${aws_sqs_queue.userstatus_sqs.name}"
 
     request_parameters = {
@@ -51,7 +51,7 @@ resource "aws_api_gateway_integration" "poc_rest_api_integration" {
 #        }
 
         depends_on = [
-            aws_iam_role_policy_attachment.apigtw_exec_role
+            aws_iam_role_policy_attachment.apigtw_role_policy
         ]
 }
 

@@ -7,7 +7,7 @@ data "archive_file" "lambda_archive_file" {
 resource "aws_lambda_function" "userstatus_lambda" {
     function_name   = "userstatus"
     handler         = "handler.lamdba_handler"
-    role            = aws_iam_role.lambda_exec_role.arn
+    role            = aws_iam_role.userstatus_lambda_role.arn
     runtime         = "python3.12"
 
     filename            = data.archive_file.lambda_archive_file.output_path
@@ -17,6 +17,6 @@ resource "aws_lambda_function" "userstatus_lambda" {
     memory_size = 128
 
     depends_on = [
-        aws_iam_role_policy_attachment.apigtw_exec_role
+        aws_iam_role_policy_attachment.userstatus_lambda_role_policy
     ]
 }

@@ -1,5 +1,6 @@
-resource "aws_iam_role" "userstatus_sqs_role" {
-    name = "userstatus-sqs-role"
+# API Gateway permissions
+resource "aws_iam_role" "apigtw_role" {
+    name = "apigtw_role"
 
     assume_role_policy = <<EOF
 {
@@ -18,6 +19,7 @@ resource "aws_iam_role" "userstatus_sqs_role" {
 EOF
 }
 
+# Data file for API Gateway permissions to SQS and CloudWatch
 data "template_file" "apigtw_policy_file" {
     template = file("../policies/apigtw_permission.json")
 
@@ -26,37 +28,25 @@ data "template_file" "apigtw_policy_file" {
     }
 }
 
+# Policy for API Gateway permissions to SQS and CloudWatch
 resource "aws_iam_policy" "apigtw_policy" {
-    name = "apigtw-sqs-cloudwatch-policy"
+    name = "apigtw_policy"
 
     policy = data.template_file.apigtw_policy_file.rendered
 }
 
-
-resource "aws_iam_role_policy_attachment" "apigtw_exec_role" {
-    role       =  aws_iam_role.userstatus_sqs_role.name
+# Attach the API Gateway policy to it's role
+resource "aws_iam_role_policy_attachment" "apigtw_role_policy" {
+    role       =  aws_iam_role.apigtw_role.name
 
     policy_arn =  aws_iam_policy.apigtw_policy.arn
 }
 
-# Add a Lambda permission that allows the specific SQS to invoke it
 
-data "template_file" "lambda_policy" {
-  template = file("../policies/lambda_permission.json")
 
-  vars = {
-    sqs_arn   = aws_sqs_queue.userstatus_sqs.arn
-  }
-}
-
-resource "aws_iam_policy" "lambda_sqs_policy" {
-  name          = "lambda_policy_db"
-  description   = "IAM policy for lambda Being invoked by SQS"
-  policy        = data.template_file.lambda_policy.rendered
-}
-
-resource "aws_iam_role" "lambda_exec_role" {
-  name               = "userstatus-lambda-db"
+# Lambda Role
+resource "aws_iam_role" "userstatus_lambda_role" {
+  name               = "userstatus_lambda_role"
   assume_role_policy = <<EOF
 {
   "Version": "2012-10-17",
@@ -74,7 +64,24 @@ resource "aws_iam_role" "lambda_exec_role" {
 EOF
 }
 
-resource "aws_iam_role_policy_attachment" "lambda_role_policy" {
-  role       = aws_iam_role.lambda_exec_role.name
-  policy_arn = aws_iam_policy.lambda_sqs_policy.arn
+# Data file for Lamdba access to SQS and CloudWatch
+data "template_file" "userstatus_lambda_policy_file" {
+  template = file("../policies/lambda_permission.json")
+
+  vars = {
+    sqs_arn   = aws_sqs_queue.userstatus_sqs.arn
+  }
+}
+
+# Policy for Lamdba access to SQS and CloudWatch
+resource "aws_iam_policy" "userstatus_lambda_policy" {
+  name          = "userstatus_lambda_policy"
+  description   = "IAM policy for lambda Being invoked by SQS"
+  policy        = data.template_file.userstatus_lambda_policy_file.rendered
+}
+
+
+resource "aws_iam_role_policy_attachment" "userstatus_lambda_role_policy" {
+  role       = aws_iam_role.userstatus_lambda_role.name
+  policy_arn = aws_iam_policy.userstatus_lambda_policy.arn
 }
