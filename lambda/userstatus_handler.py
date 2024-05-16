@@ -6,6 +6,6 @@ def lambda_handler(event, context):
 
     statusCode = 200
     response["statusCode"] = statusCode
-    respoinse["body"] = json.dumps(event)
+    response["body"] = json.dumps(event)
 
     return response
