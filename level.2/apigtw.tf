@@ -1,6 +1,6 @@
 resource "aws_api_gateway_rest_api" "poc_rest_api" {
     name        = "poc-rest-api"
-    description = "Proxy to handle requests to our API"
+    description = "Proxy to handle requests to our API and send to SQS"
 }
 
 resource "aws_api_gateway_resource" "updatestatus_resource" {
