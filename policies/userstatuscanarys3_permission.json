@@ -1,0 +1,29 @@
+{
+    "Version": "2012-10-17",
+    "Statement": [
+      {
+        "Effect": "Allow",
+        "Principal": {
+          "AWS": "lambda.amazonaws.com"
+        },
+        "Action": [ "s3:*" ],
+        "Resource": [
+          "${aws_s3_bucket.userstatus_canary_s3.arn}",
+          "${aws_s3_bucket.userstatus_canary_s3.arn}/*"
+        ]
+      },
+      {
+        "Effect": "Allow",
+        "Principal": {
+          "AWS": "lambda.amazonaws.com"
+        },
+        "Action": [
+          "cloudwatch:PutMetricData",
+          "logs:CreateLogGroup",       
+          "logs:CreateLogStream",
+          "logs:PutLogEvents"
+        ],
+        "Resource": "*:"
+      }
+    ]
+  }

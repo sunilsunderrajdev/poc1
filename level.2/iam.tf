@@ -78,8 +78,46 @@ resource "aws_iam_policy" "userstatus_lambda_policy" {
   policy        = data.template_file.userstatus_lambda_policy_file.rendered
 }
 
-
 resource "aws_iam_role_policy_attachment" "userstatus_lambda_role_policy" {
   role       = aws_iam_role.userstatus_lambda_role.name
   policy_arn = aws_iam_policy.userstatus_lambda_policy.arn
+}
+
+# API Gateway permissions
+resource "aws_iam_role" "userstatus_canary_role" {
+    name = "userstatus_canary_role"
+
+    assume_role_policy = <<EOF
+{
+    "Version": "2012-10-17",
+    "Statement": [
+        {
+            "Action": "sts:AssumeRole",
+            "Principal": {
+                "Service": "lambda.amazonaws.com"
+            },
+            "Effect": "Allow",
+            "Sid": ""
+        }
+    ]
+}
+EOF
+}
+
+data "template_file" "userstatus_canary_s3_policy_file" {
+  template = file("../policies/userstatuscanarys3_permission.json")
+
+  vars = {
+    aws_synthetics_canary_arn = aws_synthetics_canary.userstatus_canary.arn
+  }
+}
+
+resource "aws_iam_policy" "allow_userstatuscanary_policy" {
+  bucket = aws_s3_bucket.userstatus_canary_s3.id
+  policy = data.template_file.userstatus_canary_s3_policy_file.json
+}
+
+resource "aws_iam_role_policy_attachment" "userstatus_canary_role_policy" {
+  role       = aws_iam_role.userstatus_canary_role.name
+  policy_arn = aws_iam_policy.allow_userstatuscanary_policy.arn
 }
