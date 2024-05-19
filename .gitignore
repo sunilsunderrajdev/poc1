@@ -1,5 +1,6 @@
 # archives
 *.zip
+**/lambda_zips/*
 
 # local .git difrectories
 **/.git/*

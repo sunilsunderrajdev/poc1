@@ -42,8 +42,6 @@ resource "aws_iam_role_policy_attachment" "apigtw_role_policy" {
     policy_arn =  aws_iam_policy.apigtw_policy.arn
 }
 
-
-
 # Lambda Role
 resource "aws_iam_role" "userstatus_lambda_role" {
   name               = "userstatus_lambda_role"

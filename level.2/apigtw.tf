@@ -74,6 +74,17 @@ resource "aws_api_gateway_integration_response" "http200" {
     ]
 }
 
+#resource "aws_api_gateway_method_settings" "YOUR_settings" {
+#    rest_api_id = aws_api_gateway_rest_api.poc_rest_api.id
+#    stage_name  = var.env_code
+#    method_path = "*/*"
+#    settings {
+#        logging_level = "INFO"
+#        data_trace_enabled = true
+#        metrics_enabled = true
+#    }
+#}
+
 resource "aws_api_gateway_deployment" "poc_rest_api_deployment" {
     rest_api_id = aws_api_gateway_rest_api.poc_rest_api.id
     stage_name  = var.env_code

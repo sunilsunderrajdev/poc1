@@ -2,6 +2,7 @@ import json
 
 def lambda_handler(event, context):
     response = {}
+    print("Message from SQS to Lambda")
     print(event)
 
     statusCode = 200

@@ -1,12 +1,12 @@
 data "archive_file" "lambda_archive_file" {
-    source_dir  = "../lambda/"
-    output_path = "../lambda/userstatus.zip"
+    source_file  = "../lambda/ssrpocuserstatus.py"
+    output_path = "../lambda/ssrpocuserstatus.zip"
     type        = "zip"
 }
 
 resource "aws_lambda_function" "userstatus_lambda" {
-    function_name   = "userstatus"
-    handler         = "handler.lamdba_handler"
+    function_name   = "ssrpocuserstatus"
+    handler         = "ssrpocuserstatus.lambda_handler"
     role            = aws_iam_role.userstatus_lambda_role.arn
     runtime         = "python3.12"
 
