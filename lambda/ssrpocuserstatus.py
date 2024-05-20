@@ -13,7 +13,7 @@ def lambda_handler(event, context):
         #table name 
         table = dynamodb.Table('canarytable') 
         #inserting values into table 
-        response = table.put_item( 
+        dbResponse = table.put_item( 
             Item = {"minute" : event['Records'][0]['body']}
         )
     except Exception as e:
