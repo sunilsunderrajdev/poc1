@@ -1,6 +1,6 @@
 resource "aws_api_gateway_rest_api" "poc_rest_api" {
     name        = "poc-rest-api"
-    description = "Proxy to handle requests to our API and send to SQS"
+    description = "Proxy to handle requests to our API and send to SQS."
 }
 
 resource "aws_api_gateway_resource" "updatestatus_resource" {
@@ -74,16 +74,24 @@ resource "aws_api_gateway_integration_response" "http200" {
     ]
 }
 
-#resource "aws_api_gateway_method_settings" "YOUR_settings" {
-#    rest_api_id = aws_api_gateway_rest_api.poc_rest_api.id
-#    stage_name  = var.env_code
-#    method_path = "*/*"
-#    settings {
-#        logging_level = "INFO"
-#        data_trace_enabled = true
-#        metrics_enabled = true
-#    }
-#}
+resource "aws_api_gateway_account" "apigateway_settings" {
+    cloudwatch_role_arn = aws_iam_role.apigtw_role.arn
+}
+
+resource "aws_api_gateway_method_settings" "poc_rest_api_settings" {
+    rest_api_id = aws_api_gateway_rest_api.poc_rest_api.id
+    stage_name  = var.env_code
+    method_path = "*/*"
+    settings {
+        logging_level = "INFO"
+        data_trace_enabled = true
+        metrics_enabled = true
+    }
+
+    depends_on = [
+        aws_api_gateway_account.apigateway_settings
+    ]
+}
 
 resource "aws_api_gateway_deployment" "poc_rest_api_deployment" {
     rest_api_id = aws_api_gateway_rest_api.poc_rest_api.id

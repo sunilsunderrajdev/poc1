@@ -83,7 +83,7 @@ resource "aws_iam_role_policy_attachment" "userstatus_lambda_role_policy" {
   policy_arn = aws_iam_policy.userstatus_lambda_policy.arn
 }
 
-# API Gateway permissions
+# Canary permissions
 resource "aws_iam_role" "userstatus_canary_role" {
     name = "userstatus_canary_role"
 
@@ -104,20 +104,22 @@ resource "aws_iam_role" "userstatus_canary_role" {
 EOF
 }
 
-data "template_file" "userstatus_canary_s3_policy_file" {
-  template = file("../policies/userstatuscanarys3_permission.json")
+data "template_file" "userstatus_canary_policy_file" {
+  template = file("../policies/userstatuscanary_permission.json")
 
   vars = {
-    aws_synthetics_canary_arn = aws_synthetics_canary.userstatus_canary.arn
+    accountId = var.account
+    region    = var.region
   }
 }
 
-resource "aws_iam_policy" "allow_userstatuscanary_policy" {
-  bucket = aws_s3_bucket.userstatus_canary_s3.id
-  policy = data.template_file.userstatus_canary_s3_policy_file.json
+resource "aws_iam_policy" "userstatus_canary_policy" {
+  name          = "userstatus_canary_policy"
+  description   = "IAM policy for userstatus canary"
+  policy        = data.template_file.userstatus_canary_policy_file.rendered
 }
 
 resource "aws_iam_role_policy_attachment" "userstatus_canary_role_policy" {
   role       = aws_iam_role.userstatus_canary_role.name
-  policy_arn = aws_iam_policy.allow_userstatuscanary_policy.arn
+  policy_arn = aws_iam_policy.userstatus_canary_policy.arn
 }

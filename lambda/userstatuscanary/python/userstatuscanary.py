@@ -8,6 +8,7 @@ def basic_custom_script():
     # before your code has finished executing
 
     fail = False
+    
     if fail:
         raise Exception("Failed userstatus canary check.")
     

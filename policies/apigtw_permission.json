@@ -17,18 +17,7 @@
       {
         "Effect": "Allow",
         "Action": [
-          "sqs:GetQueueUrl",
-          "sqs:ChangeMessageVisibility",
-          "sqs:ListDeadLetterSourceQueues",
-          "sqs:SendMessageBatch",
-          "sqs:PurgeQueue",
-          "sqs:ReceiveMessage",
-          "sqs:SendMessage",
-          "sqs:GetQueueAttributes",
-          "sqs:CreateQueue",
-          "sqs:ListQueueTags",
-          "sqs:ChangeMessageVisibilityBatch",
-          "sqs:SetQueueAttributes"
+          "sqs:*"
         ],
         "Resource": "${sqs_arn}"
       },

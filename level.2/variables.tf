@@ -23,3 +23,11 @@ variable "env_code" {
 variable "account" {
     type = string
 }
+
+variable "synthetics_selenium_python" {
+    type = string
+}
+
+variable "canaryTable" {
+    type = string
+}
