@@ -8,9 +8,6 @@ def lambda_handler(event, context):
     response["statusCode"] = 200
     response["body"] = "Successfully completed userstatus canary inserts."
 
-    print(type(event))
-    print(event)
-
     try:
         dynamodb = boto3.resource('dynamodb')
         #table name 
