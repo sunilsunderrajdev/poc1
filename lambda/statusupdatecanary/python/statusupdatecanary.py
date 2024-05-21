@@ -1,4 +1,5 @@
 import json
+import datetime
 import http.client
 from selenium.webdriver.common.by import By
 import urllib.parse
@@ -45,7 +46,7 @@ def verify_request(method, url, post_data=None, headers={}):
 def main():
     url1 = 'https://6ql7xf0mz8.execute-api.us-east-1.amazonaws.com/dev/updatestatus'
     method1 = 'POST'
-    postData1 = "{\"minute\":\"CHANGETHIS\"}"
+    postData1 = "{\"minute\":\"%s\"}" % datetime.datetime.now().minute
     headers1 = {}
 
     verify_request(method1, url1, postData1, headers1)
