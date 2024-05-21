@@ -43,8 +43,8 @@ resource "aws_iam_role_policy_attachment" "apigtw_role_policy" {
 }
 
 # Lambda Role
-resource "aws_iam_role" "userstatus_lambda_role" {
-  name               = "userstatus_lambda_role"
+resource "aws_iam_role" "userstatusupdatedb_lambda_role" {
+  name               = "userstatusupdatedb_lambda_role"
   assume_role_policy = <<EOF
 {
   "Version": "2012-10-17",
@@ -63,7 +63,7 @@ EOF
 }
 
 # Data file for Lamdba access to SQS and CloudWatch
-data "template_file" "userstatus_lambda_policy_file" {
+data "template_file" "userstatusupdatedb_lambda_policy_file" {
   template = file("../policies/lambda_permission.json")
 
   vars = {
@@ -72,15 +72,15 @@ data "template_file" "userstatus_lambda_policy_file" {
 }
 
 # Policy for Lamdba access to SQS and CloudWatch
-resource "aws_iam_policy" "userstatus_lambda_policy" {
-  name          = "userstatus_lambda_policy"
+resource "aws_iam_policy" "userstatusupdatedb_lambda_policy" {
+  name          = "userstatusupdatedb_lambda_policy"
   description   = "IAM policy for lambda Being invoked by SQS"
-  policy        = data.template_file.userstatus_lambda_policy_file.rendered
+  policy        = data.template_file.userstatusupdatedb_lambda_policy_file.rendered
 }
 
-resource "aws_iam_role_policy_attachment" "userstatus_lambda_role_policy" {
-  role       = aws_iam_role.userstatus_lambda_role.name
-  policy_arn = aws_iam_policy.userstatus_lambda_policy.arn
+resource "aws_iam_role_policy_attachment" "userstatusupdatedb_lambda_role_policy" {
+  role       = aws_iam_role.userstatusupdatedb_lambda_role.name
+  policy_arn = aws_iam_policy.userstatusupdatedb_lambda_policy.arn
 }
 
 # Canary permissions
