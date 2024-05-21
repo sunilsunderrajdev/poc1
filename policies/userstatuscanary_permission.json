@@ -42,6 +42,13 @@
       ]
     },
     {
+        "Action": [
+            "dynamodb:*"
+        ],
+        "Resource": "arn:aws:dynamodb:*:*:table/canarytable",
+        "Effect": "Allow"
+    },
+    {
       "Effect": "Allow",
       "Resource": "*",
       "Action": "cloudwatch:PutMetricData",

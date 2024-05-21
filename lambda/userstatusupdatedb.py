@@ -5,10 +5,6 @@ from botocore.exceptions import ClientError
 
 def lambda_handler(event, context):
     response = {}
-
-    print(event)
-    print(json.loads(event['Records'][0]['body'])['minute'])
-    print("print complete")
     
     response["statusCode"] = 200
     response["body"] = "Successfully completed userstatus canary inserts."
