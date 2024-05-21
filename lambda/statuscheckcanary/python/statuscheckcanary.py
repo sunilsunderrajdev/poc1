@@ -1,18 +1,26 @@
-def basic_custom_script():
-    # Insert your code here
-    # Perform multi-step pass/fail check
-    # Log decisions made and results to /tmp
-    # Be sure to wait for all your code paths to complete 
-    # before returning control back to Synthetics.
-    # In that way, your canary will not finish and report success
-    # before your code has finished executing
+import boto3
+import json
+from botocore.exceptions import ClientError
 
-    fail = False
+def basic_custom_script():
+    response = {}
     
-    if fail:
-        raise Exception("Failed userstatus canary check.")
-    
-    return "Successfully completed userstatus canary checks."
+    response["statusCode"] = 200
+    response["body"] = "Successfully completed userstatus canary inserts."
+
+    try:
+        dynamodb = boto3.resource('dynamodb')
+        # table name 
+        table = dynamodb.Table('canarytable') 
+        # inserting values into table 
+        dbResponse = table.put_item( 
+            Item = {"minute" : event['Records'][0]['body']}
+        )
+    except Exception as e:
+        response["statusCode"] = 500
+        response["body"] = "Failed userstatus canary check with exception %s" % e
+
+    return response
 
 def handler(event, context):
     return basic_custom_script()

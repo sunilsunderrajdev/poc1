@@ -1,9 +1,9 @@
 locals {
   statusupdatecanary_source_code      = "../lambda/statusupdatecanary/python/statusupdatecanary.py"
-  statusupdatecanary_source_code_hash = sha256(local.statusupdatecanary_source_code)
+  statusupdatecanary_source_code_hash = sha256(file(local.statusupdatecanary_source_code))
 
   statuscheckcanary_source_code      = "../lambda/statuscheckcanary/python/statuscheckcanary.py"
-  statuscheckcanary_source_code_hash = sha256(local.statuscheckcanary_source_code)
+  statuscheckcanary_source_code_hash = sha256(file(local.statuscheckcanary_source_code))
 }
 
 data "archive_file" "statusupdatecanary_archive_file" {
