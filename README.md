@@ -1,2 +1,4 @@
 # poc1
-POC's
+AWS POC's
+
+API Gateway --> SQS --> Lambda --> Dynamodb
