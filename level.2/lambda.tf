@@ -1,6 +1,6 @@
 data "archive_file" "lambda_archive_file" {
-    source_file  = "../lambda/userstatusupdatedb.py"
-    output_path = "../lambda/userstatusupdatedb.zip"
+    source_file  = "../lambdas/userstatusupdatedb.py"
+    output_path = "../lambdas/userstatusupdatedb.zip"
     type        = "zip"
 }
 
