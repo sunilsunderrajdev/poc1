@@ -123,3 +123,45 @@ resource "aws_iam_role_policy_attachment" "userstatus_canary_role_policy" {
   role       = aws_iam_role.userstatus_canary_role.name
   policy_arn = aws_iam_policy.userstatus_canary_policy.arn
 }
+
+
+# EKS permissions
+resource "aws_iam_role" "eks_role" {
+    name = "eks_role"
+
+    assume_role_policy = <<EOF
+{
+    "Version": "2012-10-17",
+    "Statement": [
+        {
+            "Action": "sts:AssumeRole",
+            "Principal": {
+                "Service": "eks.amazonaws.com"
+            },
+            "Effect": "Allow",
+            "Sid": ""
+        }
+    ]
+}
+EOF
+}
+
+data "template_file" "eks_policy_file" {
+  template = file("../policies/eks_permission.json")
+
+  vars = {
+    accountId = var.account
+    region    = var.region
+  }
+}
+
+resource "aws_iam_policy" "eks_policy" {
+  name          = "eks_policy"
+  description   = "IAM policy for EKS canary"
+  policy        = data.template_file.eks_policy_file.rendered
+}
+
+resource "aws_iam_role_policy_attachment" "eks_role_policy" {
+  role       = aws_iam_role.eks_role.name
+  policy_arn = aws_iam_policy.eks_policy.arn
+}
