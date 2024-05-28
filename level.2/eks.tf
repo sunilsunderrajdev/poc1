@@ -20,6 +20,7 @@ module "eks" {
     vpc_id                      = data.terraform_remote_state.level1.outputs.vpc_id
     subnet_ids                  = data.terraform_remote_state.level1.outputs.private_subnets
     control_plane_subnet_ids    = data.terraform_remote_state.level1.outputs.intra_subnets
+    iam_role_arn                = aws_iam_role.eks_role.arn
 
     # EKS managed node groups
     eks_managed_node_group_defaults = {
