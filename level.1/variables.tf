@@ -16,6 +16,11 @@ variable "public_subnets" {
     description = "VPC Public Subnets"
 }
 
+variable "intra_subnets" {
+    type        = list(string)
+    description = "VPC Intranet Subnets"
+}
+
 variable "env_code" {
     type = string
 }

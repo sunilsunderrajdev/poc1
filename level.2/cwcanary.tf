@@ -1,14 +1,14 @@
 locals {
-  statusupdatecanary_source_code      = "../lambda/statusupdatecanary/python/statusupdatecanary.py"
+  statusupdatecanary_source_code      = "../lambdas/statusupdatecanary/python/statusupdatecanary.py"
   statusupdatecanary_source_code_hash = sha256(file(local.statusupdatecanary_source_code))
 
-  statuscheckcanary_source_code      = "../lambda/statuscheckcanary/python/statuscheckcanary.py"
+  statuscheckcanary_source_code      = "../lambdas/statuscheckcanary/python/statuscheckcanary.py"
   statuscheckcanary_source_code_hash = sha256(file(local.statuscheckcanary_source_code))
 }
 
 data "archive_file" "statusupdatecanary_archive_file" {
-    source_dir  = "../lambda/statusupdatecanary"
-    output_path = "../lambda/statusupdatecanary_${local.statusupdatecanary_source_code_hash}.zip"
+    source_dir  = "../lambdas/statusupdatecanary"
+    output_path = "../lambdas/statusupdatecanary_${local.statusupdatecanary_source_code_hash}.zip"
     type        = "zip"
 }
 
@@ -28,8 +28,8 @@ resource "aws_synthetics_canary" "statusupdate_canary" {
 }
 
 data "archive_file" "statuscheckcanary_archive_file" {
-    source_dir  = "../lambda/statuscheckcanary"
-    output_path = "../lambda/statuscheckcanary_${local.statuscheckcanary_source_code_hash}.zip"
+    source_dir  = "../lambdas/statuscheckcanary"
+    output_path = "../lambdas/statuscheckcanary_${local.statuscheckcanary_source_code_hash}.zip"
     type        = "zip"
 }
 
