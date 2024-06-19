@@ -31,3 +31,7 @@ variable "synthetics_selenium_python" {
 variable "canaryTable" {
     type = string
 }
+
+variable "domain_name" {
+    type = string
+}

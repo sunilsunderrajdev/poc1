@@ -12,15 +12,6 @@
         },
         {
             "Action": [
-                "logs:CreateLogGroup",
-                "logs:CreateLogStream",
-                "logs:PutLogEvents"
-            ],
-            "Resource": "*",
-            "Effect": "Allow"
-        },
-        {
-            "Action": [
                 "dynamodb:*"
             ],
             "Resource": "arn:aws:dynamodb:*:*:table/canarytable",
