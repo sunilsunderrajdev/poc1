@@ -10,8 +10,4 @@ env_code = "dev"
 
 account = "730335548094"
 
-synthetics_selenium_python = "syn-python-selenium-3.0"
-
-canaryTable = "canarytable"
-
 domain_name = "techpod.io"
