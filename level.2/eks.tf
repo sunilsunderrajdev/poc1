@@ -18,7 +18,7 @@ module "eks" {
     source  = "terraform-aws-modules/eks/aws"
     version = "20.11.1"
 
-    cluster_name                    = "promexporter"
+    cluster_name                    = "eksms"
     cluster_endpoint_public_access  = true
     create_iam_role                 = false
     iam_role_arn                    = aws_iam_role.eks_cluster_role.arn
