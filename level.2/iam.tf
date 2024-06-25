@@ -1,6 +1,10 @@
+locals {
+    cluster_oidc = replace("${module.eks.cluster_oidc_issuer_url}", "https://", "")
+}
+
 # Data file for observability permissions to all resources
 data "template_file" "observability_policy_file" {
-    template = file("../policies/observability_permission.json")
+    template = file("../policies/observability_policy.json")
 }
 
 # Policy for Observability permissions to all resources
@@ -86,4 +90,47 @@ resource "aws_iam_role_policy_attachment" "node_group_role_observability_policy"
 resource "aws_iam_role_policy_attachment" "eks_cluster_role_observability_policy" {
   role       = aws_iam_role.eks_cluster_role.name
   policy_arn = aws_iam_policy.observability_policy.arn
+}
+
+# AWS Load Balancer Controller permissions
+resource "aws_iam_role" "AWSLoadBalancerControllerIAM_role" {
+    name = "AWSLoadBalancerControllerIAM_role"
+
+    assume_role_policy = <<EOF
+{
+    "Version": "2012-10-17",
+    "Statement": [
+        {
+            "Effect": "Allow",
+            "Principal": {
+                "Federated": "arn:aws:iam::${var.account}:oidc-provider/${local.cluster_oidc}"
+            },
+            "Action": "sts:AssumeRoleWithWebIdentity",
+            "Condition": {
+                "StringEquals": {
+                    "${local.cluster_oidc}:aud": "sts.amazonaws.com",
+                    "${local.cluster_oidc}:sub": "system:serviceaccount:kube-system:aws-load-balancer-controller"
+                }
+            }
+        }
+    ]
+}
+EOF
+}
+
+# Data file for AWS Load Balancer Controller permissions to resources
+data "template_file" "AwsLoadBalancerController_policy_file" {
+    template = file("../policies/AWSLoadBalancerControllerIAM_policy.json")
+}
+
+# Policy for AWS Load Balancer Controller permissions to all resources
+resource "aws_iam_policy" "AWSLoadBalancerControllerIAM_policy" {
+    name = "AWSLoadBalancerControllerIAM_policy"
+
+    policy = data.template_file.AwsLoadBalancerController_policy_file.rendered
+}
+
+resource "aws_iam_role_policy_attachment" "AWSLoadBalancerControllerIAM_policy_attachment" {
+  role       = aws_iam_role.AWSLoadBalancerControllerIAM_role.name
+  policy_arn = aws_iam_policy.AWSLoadBalancerControllerIAM_policy.arn
 }

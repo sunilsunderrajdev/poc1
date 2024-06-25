@@ -27,3 +27,7 @@ variable "account" {
 variable "domain_name" {
     type = string
 }
+
+variable "eks_namespace" {
+  type = string
+}
