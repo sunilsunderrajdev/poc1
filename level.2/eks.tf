@@ -66,10 +66,18 @@ module "eks" {
     }
 }
 
+resource "kubernetes_namespace" "eksms_ns" {
+    metadata {
+        name = var.eks_namespace
+    }
+
+    depends_on = [module.eks]
+}
+
 resource "kubernetes_service_account" "eks_service_account" {
     metadata {
         name        = "eksserviceaccount"
-        namespace   = var.eks_namespace
+        namespace   = kubernetes_namespace.eksms_ns.metadata.0.name
 
         labels = {
             "app.kubernetes.io/component" = "controller"
@@ -80,4 +88,72 @@ resource "kubernetes_service_account" "eks_service_account" {
             "eks.amazonaws.com/role-arn" = aws_iam_role.AWSLoadBalancerControllerIAM_role.arn
         }
     }
+
+    depends_on = [module.eks]
+}
+
+resource "kubernetes_deployment" "deployment" {
+  metadata {
+    name      = "deployment-nginx"
+    namespace = kubernetes_namespace.eksms_ns.metadata.0.name
+
+    labels = {
+      tier = "frontend"
+    }
+  }
+
+  spec {
+    replicas = 3
+
+    selector {
+      match_labels = {
+        app.kubernetes.io/name = "app-eksms"
+      }
+    }
+
+    template {
+      metadata {
+        labels = {
+          app.kubernetes.io/name = "app-eksms"
+        }
+      }
+
+      spec {
+        container {
+          image = "nginx:latest"
+          name  = "app-eksms"
+          
+          port {
+            container_port = 8080
+          }
+
+          resources {
+            limits = {
+              cpu    = "1"
+              memory = "256Mi"
+            }
+            requests = {
+              cpu    = "500m"
+              memory = "30Mi"
+            }
+          }
+
+          liveness_probe {
+            http_get {
+              path = "/"
+              port = 8080
+
+              http_header {
+                name  = "X-Custom-Header"
+                value = "SSREKS"
+              }
+            }
+
+            initial_delay_seconds = 2
+            period_seconds        = 2
+          }
+        }
+      }
+    }
+  }
 }

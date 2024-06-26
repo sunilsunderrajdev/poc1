@@ -13,3 +13,5 @@ account = "730335548094"
 domain_name = "techpod.io"
 
 eks_namespace = "eksms"
+
+eks_cluster_name = "eksms"
