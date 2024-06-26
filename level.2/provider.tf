@@ -3,6 +3,10 @@ terraform {
         aws = {
             source = "hashicorp/aws"
         }
+        kubernetes = {
+            source  = "hashicorp/kubernetes"
+            version = ">= 2.0.0"
+        }
         random = {
             source = "hashicorp/random"
         }
@@ -18,4 +22,8 @@ terraform {
 
 provider "aws" {
     region = var.region
+}
+
+provider "kubernetes" {
+  config_path    = "~/.kube/config"
 }

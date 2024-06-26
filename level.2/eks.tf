@@ -66,18 +66,18 @@ module "eks" {
     }
 }
 
-# resource "kubernetes_service_account" "eks_service_account" {
-#     metadata {
-#         name        = "eks_service_account"
-#         namespace   = var.eks_namespace
+resource "kubernetes_service_account" "eks_service_account" {
+    metadata {
+        name        = "eksserviceaccount"
+        namespace   = var.eks_namespace
 
-#         labels = {
-#             "app.kubernetes.io/component" = "controller"
-#             "app.kubernetes.io/name" = "aws-load-balancer-controller"
-#         }
+        labels = {
+            "app.kubernetes.io/component" = "controller"
+            "app.kubernetes.io/name" = "aws-load-balancer-controller"
+        }
 
-#         annotations = {
-#             "eks.amazonaws.com/role-arn" = aws_iam_role.AWSLoadBalancerControllerIAM_role.arn
-#         }
-#     }
-# }
+        annotations = {
+            "eks.amazonaws.com/role-arn" = aws_iam_role.AWSLoadBalancerControllerIAM_role.arn
+        }
+    }
+}
