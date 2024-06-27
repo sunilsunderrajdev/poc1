@@ -54,10 +54,10 @@ module "eks" {
 
             min_size        = 1
             max_size        = 2
-            desired_siez    = 1
+            desired_size    = 1
 
-            instance_types  = ["t2.small"]
-            capacity_type   = "SPOT"
+            instance_types  = ["t2.medium"]
+            capacity_type   = "ON_DEMAND"
 
             tags = {
                 ExtraTag = "nginx-cluster-wg"
@@ -124,34 +124,68 @@ resource "kubernetes_deployment" "deployment" {
           name  = "app-eksms"
           
           port {
-            container_port = 8080
-          }
-
-          resources {
-            limits = {
-              cpu    = "1"
-              memory = "256Mi"
-            }
-            requests = {
-              cpu    = "500m"
-              memory = "30Mi"
-            }
+            container_port = 80
           }
 
           liveness_probe {
             http_get {
               path = "/"
-              port = 8080
-
-              http_header {
-                name  = "X-Custom-Header"
-                value = "SSREKS"
-              }
+              port = 80
             }
 
-            initial_delay_seconds = 2
-            period_seconds        = 2
+            failure_threshold     = 3
+            initial_delay_seconds = 3
+            period_seconds        = 3
+            success_threshold     = 1
+            timeout_seconds       = 1
           }
+        }
+      }
+    }
+  }
+}
+
+resource "kubernetes_service" "service" {
+  metadata {
+    name      = "service-nginx"
+    namespace = kubernetes_namespace.eksms_ns.metadata.0.name
+  }
+  spec {
+    selector = {
+      "app.kubernetes.io/name" = "app-eksms"
+    }
+    port {
+      port        = 8080
+      target_port = 80
+    }
+
+    type = "NodePort"
+  }
+}
+
+resource "kubernetes_ingress" "k8s_ingress" {
+  metadata {
+    name      = "ingress-k8s-services"
+    namespace = kubernetes_namespace.eksms_ns.metadata.0.name
+
+    annotations = {
+      "alb.ingress.kubernetes.io/scheme" = "internet-facing"
+      "alb.ingress.kubernetes.io/target-type" = "ip"
+    }
+  }
+
+  spec {
+    ingress_class_name = "alb"
+
+    rule {
+      http {
+        path {
+          backend {
+            service_name = kubernetes_namespace.eksms_ns.metadata.0.name
+            service_port = 8080
+          }
+
+          path = "/"
         }
       }
     }
