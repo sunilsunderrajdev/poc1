@@ -107,14 +107,14 @@ resource "kubernetes_deployment" "deployment" {
 
     selector {
       match_labels = {
-        app.kubernetes.io/name = "app-eksms"
+        "app.kubernetes.io/name" = "app-eksms"
       }
     }
 
     template {
       metadata {
         labels = {
-          app.kubernetes.io/name = "app-eksms"
+          "app.kubernetes.io/name" = "app-eksms"
         }
       }
 
