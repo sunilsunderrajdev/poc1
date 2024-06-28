@@ -84,9 +84,9 @@ resource "kubernetes_service_account" "eks_service_account" {
             "app.kubernetes.io/name" = "aws-load-balancer-controller"
         }
 
-        annotations = {
-            "eks.amazonaws.com/role-arn" = aws_iam_role.AWSLoadBalancerControllerIAM_role.arn
-        }
+        # annotations = {
+        #     "eks.amazonaws.com/role-arn" = aws_iam_role.AWSLoadBalancerControllerIAM_role.arn
+        # }
     }
 
     depends_on = [module.eks]
@@ -103,7 +103,7 @@ resource "kubernetes_deployment" "deployment" {
   }
 
   spec {
-    replicas = 3
+    replicas            = 3
 
     selector {
       match_labels = {
@@ -119,6 +119,8 @@ resource "kubernetes_deployment" "deployment" {
       }
 
       spec {
+        service_account_name = kubernetes_service_account.eks_service_account.metadata.0.name
+
         container {
           image = "nginx:latest"
           name  = "app-eksms"
@@ -163,7 +165,7 @@ resource "kubernetes_service" "service" {
   }
 }
 
-resource "kubernetes_ingress" "k8s_ingress" {
+resource "kubernetes_ingress_v1" "k8s_ingress1" {
   metadata {
     name      = "ingress-k8s-services"
     namespace = kubernetes_namespace.eksms_ns.metadata.0.name
@@ -181,8 +183,12 @@ resource "kubernetes_ingress" "k8s_ingress" {
       http {
         path {
           backend {
-            service_name = kubernetes_namespace.eksms_ns.metadata.0.name
-            service_port = 8080
+            service {
+              name = kubernetes_namespace.eksms_ns.metadata.0.name
+              port {
+                number = 8080
+              }
+            }
           }
 
           path = "/"
