@@ -1,6 +1,6 @@
 locals {
     cluster_oidc            = replace("${module.eks.cluster_oidc_issuer_url}", "https://", "")
-    cluster_service_account = format("%s:%s",kubernetes_namespace.eksms_ns.metadata.0.name,kubernetes_service_account.eks_service_account.metadata.0.name)
+    # cluster_service_account = format("%s:%s",kubernetes_namespace.eksms_ns.metadata.0.name,kubernetes_service_account.eks_service_account.metadata.0.name)
 }
 
 # Data file for observability permissions to all resources
@@ -115,7 +115,7 @@ resource "aws_iam_role" "AWSLoadBalancerControllerIAM_role" {
             "Condition": {
                 "StringEquals": {
                     "${local.cluster_oidc}:aud": "sts.amazonaws.com",
-                    "${local.cluster_oidc}:sub": "system:serviceaccount:${local.cluster_service_account}"
+                    "${local.cluster_oidc}:sub": "system:serviceaccount:eksms:eksserviceaccount"
                 }
             }
         }

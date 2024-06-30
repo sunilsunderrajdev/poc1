@@ -84,9 +84,9 @@ resource "kubernetes_service_account" "eks_service_account" {
             "app.kubernetes.io/name" = "aws-load-balancer-controller"
         }
 
-        # annotations = {
-        #     "eks.amazonaws.com/role-arn" = aws_iam_role.AWSLoadBalancerControllerIAM_role.arn
-        # }
+        annotations = {
+            "eks.amazonaws.com/role-arn" = aws_iam_role.AWSLoadBalancerControllerIAM_role.arn
+        }
     }
 
     depends_on = [module.eks]
@@ -165,35 +165,35 @@ resource "kubernetes_service" "service" {
   }
 }
 
-resource "kubernetes_ingress_v1" "k8s_ingress1" {
-  metadata {
-    name      = "ingress-k8s-services"
-    namespace = kubernetes_namespace.eksms_ns.metadata.0.name
+# resource "kubernetes_ingress_v1" "k8s_ingress1" {
+#   metadata {
+#     name      = "ingress-k8s-services"
+#     namespace = kubernetes_namespace.eksms_ns.metadata.0.name
 
-    annotations = {
-      "alb.ingress.kubernetes.io/scheme" = "internet-facing"
-      "alb.ingress.kubernetes.io/target-type" = "ip"
-    }
-  }
+#     annotations = {
+#       "alb.ingress.kubernetes.io/scheme" = "internet-facing"
+#       "alb.ingress.kubernetes.io/target-type" = "ip"
+#     }
+#   }
 
-  spec {
-    ingress_class_name = "alb"
+#   spec {
+#     ingress_class_name = "alb"
 
-    rule {
-      http {
-        path {
-          backend {
-            service {
-              name = kubernetes_namespace.eksms_ns.metadata.0.name
-              port {
-                number = 8080
-              }
-            }
-          }
+#     rule {
+#       http {
+#         path {
+#           backend {
+#             service {
+#               name = kubernetes_namespace.eksms_ns.metadata.0.name
+#               port {
+#                 number = 8080
+#               }
+#             }
+#           }
 
-          path = "/"
-        }
-      }
-    }
-  }
-}
+#           path = "/"
+#         }
+#       }
+#     }
+#   }
+# }
