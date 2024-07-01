@@ -66,18 +66,18 @@ module "eks" {
     }
 }
 
-resource "kubernetes_namespace" "eksms_ns" {
-    metadata {
-        name = var.eks_namespace
-    }
+# resource "kubernetes_namespace" "eksms_ns" {
+#     metadata {
+#         name = var.eks_namespace
+#     }
 
-    depends_on = [module.eks]
-}
+#     depends_on = [module.eks]
+# }
 
 resource "kubernetes_service_account" "eks_service_account" {
     metadata {
-        name        = "eksserviceaccount"
-        namespace   = kubernetes_namespace.eksms_ns.metadata.0.name
+        name        = "alb-ingress-controller"
+        namespace   = "kube-system"
 
         labels = {
             "app.kubernetes.io/component" = "controller"
@@ -95,7 +95,7 @@ resource "kubernetes_service_account" "eks_service_account" {
 resource "kubernetes_deployment" "deployment" {
   metadata {
     name      = "deployment-nginx"
-    namespace = kubernetes_namespace.eksms_ns.metadata.0.name
+    //namespace = kubernetes_namespace.eksms_ns.metadata.0.name
 
     labels = {
       tier = "frontend"
@@ -119,7 +119,7 @@ resource "kubernetes_deployment" "deployment" {
       }
 
       spec {
-        service_account_name = kubernetes_service_account.eks_service_account.metadata.0.name
+        //service_account_name = kubernetes_service_account.eks_service_account.metadata.0.name
 
         container {
           image = "nginx:latest"
@@ -150,12 +150,13 @@ resource "kubernetes_deployment" "deployment" {
 resource "kubernetes_service" "service" {
   metadata {
     name      = "service-nginx"
-    namespace = kubernetes_namespace.eksms_ns.metadata.0.name
+    //namespace = kubernetes_namespace.eksms_ns.metadata.0.name
   }
   spec {
     selector = {
       "app.kubernetes.io/name" = "app-eksms"
     }
+
     port {
       port        = 8080
       target_port = 80

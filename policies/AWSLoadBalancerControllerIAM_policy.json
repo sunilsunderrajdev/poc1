@@ -16,7 +16,6 @@
         {
             "Effect": "Allow",
             "Action": [
-                "iam:CreateServiceLinkedRole",
                 "ec2:DescribeAccountAttributes",
                 "ec2:DescribeAddresses",
                 "ec2:DescribeAvailabilityZones",
